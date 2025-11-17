@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8418846800135844285}
   - component: {fileID: 8177127779543065079}
   - component: {fileID: 8948595371137224757}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,3 +121,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e79204574274ba41b0369f0552ec0e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  x: 0
+  y: 0

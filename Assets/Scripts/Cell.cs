@@ -6,7 +6,11 @@ public class Cell : MonoBehaviour
     public int y;
 
     private Item _currentItem;
-    // public bool IsEmpty => currentItem == null;
+    public bool IsEmpty => _currentItem == null;
+    
+    public DragItemMerge CurrentDragItemMerge { get; set; }
+    
+    // public bool IsEmpty => CurrentItem == null;
 
     public void Init(int x, int y)
     {

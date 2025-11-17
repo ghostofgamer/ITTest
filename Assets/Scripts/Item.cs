@@ -3,16 +3,22 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public int Level { get; private set; }
-    public Cell Cell{ get; private set; }
+    public Cell Cell { get; private set; }
+    public int Id { get; private set; }
+
+    private void Start()
+    {
+        Id = GetInstanceID();
+    }
 
     public void SetCell(Cell cell)
     {
-        this.Cell = cell;
+        Cell = cell;
         cell.SetItem(this);
     }
 
     public void SetLevel(int level)
     {
-        this.Level = level;
+        Level = level;
     }
 }
