@@ -1,85 +1,96 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemSpawner : MonoBehaviour
+namespace SpawnContent
 {
-    [SerializeField] private float _spawnInterval = 3f;
-    [SerializeField] private GridCreator _grid;
-    [SerializeField] private Transform _container;
-    [SerializeField] private Item[] _prefabs;
-
-    private Item _defaultItem;
-    private Dictionary<int, ObjectPool<Item>> _pools;
-
-    private void OnEnable()
+    public class ItemSpawner : MonoBehaviour
     {
-        _grid._GridCreated += StartSpawn;
-    }
+// @formatter:off           
+        [Header("References")]
+        [SerializeField] private GridCreator _grid;
+        [SerializeField] private Item[] _prefabs;
+        [SerializeField] private Transform _container;
+        
+        [Header("Parameters")]
+        [SerializeField] private float _spawnInterval = 3f;
+// @formatter:on
 
-    private void OnDisable()
-    {
-        _grid._GridCreated -= StartSpawn;
-    }
+        private Item _item;
+        private int _defaultLevel = 1;
+        private Dictionary<int, ObjectPool<Item>> _pools;
 
-    public void Init()
-    {
-        InitPools();
-    }
-
-    public void MergeSpawn(Cell cell, int targetLvl)
-    {
-        Item item = GetFromPool(targetLvl);
-
-        if (item != null)
+        private void OnEnable()
         {
-            item.SetCell(cell);
-            item.PlayParticle();
+            _grid.GridCreated += StartSpawn;
         }
-        else
-            Debug.Log("Ошибка поиска префаба");
-    }
 
-    private void InitPools()
-    {
-        _pools = new Dictionary<int, ObjectPool<Item>>();
-
-        foreach (var prefab in _prefabs)
+        private void OnDisable()
         {
-            if (!_pools.ContainsKey(prefab.Level))
-            {
-                var pool = new ObjectPool<Item>(prefab, 5, _container);
-                pool.SetAutoExpand(true);
+            _grid.GridCreated -= StartSpawn;
+        }
 
-                _pools.Add(prefab.Level, pool);
+        public void Init()
+        {
+            InitPools();
+        }
+
+        public void MergeSpawn(Cell cell, int targetLvl)
+        {
+            _item = GetFromPool(targetLvl);
+
+            if (_item != null)
+            {
+                _item.SetCell(cell);
+                _item.PlayParticle();
+            }
+            else
+            {
+                Debug.Log("Ошибка поиска префаба");
             }
         }
-    }
 
-    private Item GetFromPool(int level)
-    {
-        if (_pools.TryGetValue(level, out var pool))
+        private void InitPools()
         {
-            if (pool.TryGetObject(out Item item, pool.Prefab))
-                return item;
+            _pools = new Dictionary<int, ObjectPool<Item>>();
+
+            foreach (var prefab in _prefabs)
+            {
+                if (!_pools.ContainsKey(prefab.Level))
+                {
+                    var pool = new ObjectPool<Item>(prefab, 5, _container);
+                    pool.SetAutoExpand(true);
+
+                    _pools.Add(prefab.Level, pool);
+                }
+            }
         }
 
-        Debug.LogError($"Пул для уровня {level} не найден или пуст");
-        return null;
-    }
+        private Item GetFromPool(int level)
+        {
+            if (_pools.TryGetValue(level, out var pool))
+            {
+                if (pool.TryGetObject(out Item item, pool.Prefab))
+                    return item;
+            }
 
-    private void StartSpawn()
-    {
-        InvokeRepeating(nameof(SpawnItem), 1f, _spawnInterval);
-    }
+            Debug.LogError($"Пул для уровня {level} не найден или пуст");
+            return null;
+        }
 
-    private void SpawnItem()
-    {
-        var cell = _grid.GetFreeCell();
+        private void StartSpawn()
+        {
+            InvokeRepeating(nameof(SpawnItem), 1f, _spawnInterval);
+        }
 
-        if (cell == null)
-            return;
+        private void SpawnItem()
+        {
+            var cell = _grid.GetFreeCell();
 
-        Item it = GetFromPool(1);
-        it.SetCell(cell);
+            if (cell == null)
+                return;
+
+            Item it = GetFromPool(_defaultLevel);
+            it.SetCell(cell);
+        }
     }
 }

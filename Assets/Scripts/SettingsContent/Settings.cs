@@ -11,11 +11,20 @@ namespace SettingsContent
         private const string SFX = "SFX";
         private const string Master = "Master";
 
+// @formatter:off
+        [Header("References")]
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private Slider _slider;
         [SerializeField] private Toggle _toggleSound;
         [SerializeField] private Toggle _toggleSFX;
+        
+        [Header("Volume Parameters")]
         [SerializeField] private float _defaultVolume = 0.5f;
+// @formatter:on
+
+        private float _onValue = 0;
+        private float _offValue = -80;
+        private float _factor = 20f;
 
         private void Start()
         {
@@ -28,13 +37,13 @@ namespace SettingsContent
 
         private void SetSoundEnabled(bool on)
         {
-            _audioMixer.SetFloat(Sound, on ? 0 : -80);
+            _audioMixer.SetFloat(Sound, on ? _onValue : _offValue);
             AudioPlayer.PlayClickSound();
         }
 
         private void SetSFXEnabled(bool on)
         {
-            _audioMixer.SetFloat(SFX, on ? 0 : -80);
+            _audioMixer.SetFloat(SFX, on ? _onValue : _offValue);
             AudioPlayer.PlayClickSound();
         }
 
@@ -43,11 +52,11 @@ namespace SettingsContent
             float dB;
 
             if (value <= 0.0001f)
-                dB = -80f;
+                dB = _offValue;
             else
-                dB = Mathf.Log10(value) * 20f;
+                dB = Mathf.Log10(value) * _factor;
 
             _audioMixer.SetFloat(Master, dB);
         }
     }
-} 
+}

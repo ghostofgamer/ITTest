@@ -5,23 +5,18 @@ using UnityEngine.UI;
 
 public class LoadingScreen : AbstractScreen
 {
-    [Header("UI Elements")] [SerializeField]
-    private CanvasGroup _canvasGroup;
-
+// @formatter:off    
+    [Header("UI Elements")] 
+    [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private Image _fillImage;
+    [Header("Parameters")] 
     [SerializeField] private float _fadeDuration = 0.5f;
     [SerializeField] private float _fillSmoothSpeed = 3f;
+// @formatter:on
 
     private float _targetFill = 0f;
     private bool _isWork = false;
     private float _elapsedTime;
-
-    private void Awake()
-    {
-        _canvasGroup.alpha = 1f;
-        _canvasGroup.blocksRaycasts = true;
-        _fillImage.fillAmount = 0f;
-    }
 
     private void Update()
     {

@@ -13,13 +13,23 @@ public class GridCreator : MonoBehaviour
     [SerializeField] private Transform _container;
 
     private Cell[,] _grid;
+    private Vector3 _finalPosition;
+    private Vector3 _startPosition;
+    private float _posX;
+    private float _posZ;
+    private Coroutine _gridCoroutine;
+    private WaitForSeconds _waitForSeconds = new WaitForSeconds(0.05f);
 
-    public event Action _GridCreated;
+    public event Action GridCreated;
 
     public void CreateGrid()
     {
         _grid = new Cell[_gridConfig.Rows, _gridConfig.Cols];
-        StartCoroutine(GenerateGridCoroutine());
+
+        if (_gridCoroutine != null)
+            StopCoroutine(_gridCoroutine);
+
+        _gridCoroutine = StartCoroutine(GenerateGridCoroutine());
     }
 
     private IEnumerator GenerateGridCoroutine()
@@ -27,24 +37,18 @@ public class GridCreator : MonoBehaviour
         for (int y = 0; y < _gridConfig.Rows; y++)
         for (int x = 0; x < _gridConfig.Cols; x++)
         {
-            float posX = x * _gridConfig.XOffset;
-            float posZ = y * _gridConfig.ZOffset;
-
-            Vector3 finalPos = new Vector3(posX, 0, posZ);
-            Vector3 startPos = finalPos + new Vector3(0, -1f, 0);
-
-            Cell newCell = Instantiate(_gridConfig.CellPrefab, startPos, Quaternion.identity, _container);
+            _posX = x * _gridConfig.XOffset;
+            _posZ = y * _gridConfig.ZOffset;
+            _finalPosition = new Vector3(_posX, 0, _posZ);
+            _startPosition = _finalPosition + new Vector3(0, -1f, 0);
+            Cell newCell = Instantiate(_gridConfig.CellPrefab, _startPosition, Quaternion.identity, _container);
             AudioPlayer.PlayCellSpawnSound();
-            newCell.Init(x, y);
             _grid[y, x] = newCell;
-            newCell.transform
-                .DOMove(finalPos, 0.4f)
-                .SetEase(Ease.OutBack);
-
-            yield return new WaitForSeconds(0.05f);
+            newCell.transform.DOMove(_finalPosition, 0.4f).SetEase(Ease.OutBack);
+            yield return _waitForSeconds;
         }
 
-        _GridCreated?.Invoke();
+        GridCreated?.Invoke();
     }
 
     public Cell GetFreeCell()
@@ -55,7 +59,8 @@ public class GridCreator : MonoBehaviour
             if (c.IsEmpty)
                 empty.Add(c);
 
-        if (empty.Count == 0) return null;
+        if (empty.Count == 0)
+            return null;
 
         return empty[Random.Range(0, empty.Count)];
     }

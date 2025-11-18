@@ -1,16 +1,20 @@
 using AudioContent;
+using SpawnContent;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DragItemMerge : MonoBehaviour
 {
-    [Header("Drag settings")] [SerializeField]
-    private float liftY = 2f;
-
+// @formatter:off    
+    [Header("References")] 
+    [SerializeField] private ItemSpawner _itemSpawner;
+    
+    [Header("Drag settings")] 
+    [SerializeField] private float liftY = 2f;
     [SerializeField] private float followSpeed = 10f;
     [SerializeField] private LayerMask cellLayer;
     [SerializeField] private int _maxLevel = 5;
-    [SerializeField] private ItemSpawner _itemSpawner;
+// @formatter:on
 
     private RaycastHit hit;
     private Item _selectObject;
@@ -24,7 +28,7 @@ public class DragItemMerge : MonoBehaviour
 
         if (_selectObject == null)
             return;
-        
+
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             Join();
@@ -42,26 +46,20 @@ public class DragItemMerge : MonoBehaviour
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
         Vector3 rayDirection = worldPos - Camera.main.transform.position;
         RaycastHit hitInfo;
-        
+
         if (Physics.Raycast(worldPos, rayDirection, out hitInfo, Mathf.Infinity, cellLayer))
         {
-            Debug.Log("Hit " + hitInfo.transform.name);
-
             if (hitInfo.transform.TryGetComponent(out Cell cell))
             {
                 if (cell.IsEmpty)
                 {
                     ClearCell();
                     _selectObject.SetCell(cell);
-                    Debug.Log("Cell is Empty!");
                     return;
                 }
-                else
-                {
-                    ComparisonItem(cell);
-                    Debug.Log("Cell is НЕЕЕ Empty!");
-                    return;
-                }
+
+                ComparisonItem(cell);
+                return;
             }
         }
 
@@ -76,16 +74,8 @@ public class DragItemMerge : MonoBehaviour
 
     private RaycastHit CastRay()
     {
-        Vector3 screenMousePosfar = new Vector3(
-            Input.mousePosition.x,
-            Input.mousePosition.y,
-            Camera.main.farClipPlane);
-
-        Vector3 screenMousePosNear = new Vector3(
-            Input.mousePosition.x,
-            Input.mousePosition.y,
-            Camera.main.nearClipPlane);
-
+        Vector3 screenMousePosfar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
+        Vector3 screenMousePosNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
         Vector3 worldPosMousePosFar = Camera.main.ScreenToWorldPoint(screenMousePosfar);
         Vector3 worldPosMousePosNear = Camera.main.ScreenToWorldPoint(screenMousePosNear);
         RaycastHit hit;
@@ -103,7 +93,7 @@ public class DragItemMerge : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-        
+
         if (_selectObject == null)
         {
             hit = CastRay();
@@ -135,36 +125,29 @@ public class DragItemMerge : MonoBehaviour
     {
         if (_selectObject.Level >= _maxLevel)
         {
-            Debug.Log("левел максимальный " + _selectObject.Level);
             ResetPosition();
             return;
         }
 
         if (cell != _selectObject.Cell)
         {
-            Debug.Log("Чужое CEll");
-
             if (_selectObject.Level == cell.CurrentItem.Level)
             {
-                Debug.Log("у них один уровень");
                 _selectObject.gameObject.SetActive(false);
                 cell.CurrentItem.gameObject.SetActive(false);
                 _selectObject.Cell.Clear();
                 ClearCell();
-                
-                _itemSpawner.MergeSpawn(cell,_selectObject.Level + 1);
+                _itemSpawner.MergeSpawn(cell, _selectObject.Level + 1);
                 AudioPlayer.PlayMergeSound();
             }
             else
             {
                 ResetPosition();
-                Debug.Log("Разные уровни");
             }
         }
         else
         {
             ResetPosition();
-            Debug.Log("Наше CEll");
         }
     }
 }

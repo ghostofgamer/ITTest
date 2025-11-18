@@ -6,12 +6,17 @@ namespace UI
 {
     public class ScreenAnimation : MonoBehaviour
     {
-        [SerializeField] private AnimationType _openType;
-        [SerializeField] private AnimationType _closeType;
-        [SerializeField] private float _duration = 0.5f;
-        [SerializeField] private Ease _ease = Ease.OutBack;
+// @formatter:off        
+        [Header("References")]
         [SerializeField] private RectTransform _rect;
         [SerializeField] private CanvasGroup _canvasGroup;
+        
+        [Header("Configurations")]
+        [SerializeField] private AnimationType _openType;
+        [SerializeField] private AnimationType _closeType;
+        [SerializeField] private Ease _ease = Ease.OutBack;
+        [SerializeField] private float _duration = 0.5f;
+// @formatter:on
 
         public void PlayOpen()
         {
@@ -78,16 +83,14 @@ namespace UI
         private void SlideToBottom()
         {
             FadeOut();
-            _rect.DOAnchorPos(new Vector2(0, -Screen.height), _duration)
-                .SetEase(_ease)
+            _rect.DOAnchorPos(new Vector2(0, -Screen.height), _duration).SetEase(_ease)
                 .OnComplete(() => SetCanvasValue(false));
         }
 
         private void SlideToTop()
         {
             FadeOut();
-            _rect.DOAnchorPos(new Vector2(0, Screen.height), _duration)
-                .SetEase(_ease)
+            _rect.DOAnchorPos(new Vector2(0, Screen.height), _duration).SetEase(_ease)
                 .OnComplete(() => SetCanvasValue(false));
         }
 
@@ -104,9 +107,7 @@ namespace UI
         {
             _rect.anchoredPosition = new Vector2(0, 0);
             FadeOut();
-            _rect.DOScale(0f, _duration)
-                .SetEase(_ease)
-                .OnComplete(() => SetCanvasValue(false));
+            _rect.DOScale(0f, _duration).SetEase(_ease).OnComplete(() => SetCanvasValue(false));
         }
 
         private void FadeIn()
@@ -121,8 +122,7 @@ namespace UI
         private void FadeOut()
         {
             _rect.anchoredPosition = new Vector2(0, 0);
-            _canvasGroup.DOFade(0f, _duration)
-                .OnComplete(() => SetCanvasValue(false));
+            _canvasGroup.DOFade(0f, _duration).OnComplete(() => SetCanvasValue(false));
         }
 
         private void SetCanvasValue(bool value)
