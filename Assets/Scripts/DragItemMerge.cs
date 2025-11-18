@@ -1,4 +1,6 @@
+using AudioContent;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class DragItemMerge : MonoBehaviour
 {
@@ -98,6 +100,9 @@ public class DragItemMerge : MonoBehaviour
 
     private void TakeItem()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+        
         if (_selectObject == null)
         {
             hit = CastRay();

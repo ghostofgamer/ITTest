@@ -42,20 +42,6 @@ public class ObjectPool<T> where T : MonoBehaviour
         spawned.gameObject.SetActive(true);
 
         return true;
-        
-        
-        /*var filter = _poolGeneric.Where(p => p.gameObject.activeSelf == false);
-        var index = Random.Range(0, filter.Count());
-
-        if (filter.Count() == 0 && AutoExpand)
-        {
-            spawned = CreateObject(prefabs);
-            return spawned != null;
-        }
-
-        spawned = filter.ElementAt(index);
-        spawned.gameObject.SetActive(true);
-        return spawned != null;*/
     }
 
     public void SetAutoExpand(bool flag)
