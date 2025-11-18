@@ -11,6 +11,7 @@ namespace Initialization
         [SerializeField] private GridCreator _gridCreator;
         [SerializeField] private AudioConfig _audioConfig;
         [SerializeField]private AudioSource _audioSource;
+        [SerializeField] private LoadingScreen _loadingScreen;
 
         private Coroutine _coroutine;
         private WaitForSeconds _waitForSeconds = new WaitForSeconds(0.3f);
@@ -30,9 +31,16 @@ namespace Initialization
 
         private IEnumerator StartInit()
         {
-            AudioPlayer.Init(_audioConfig,_audioSource);
-            _itemSpawner.Init();
+            _loadingScreen.Show();
             yield return _waitForSeconds;
+            AudioPlayer.Init(_audioConfig,_audioSource);
+            _loadingScreen.SetProgress(0.3f);
+            yield return _waitForSeconds;
+            _itemSpawner.Init();
+            _loadingScreen.SetProgress(0.6f);
+            yield return _waitForSeconds;
+            _loadingScreen.SetProgress(1f);
+            yield return _loadingScreen.FadeOut();
             _gridCreator.CreateGrid();
         }
     }

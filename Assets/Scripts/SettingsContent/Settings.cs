@@ -20,9 +20,10 @@ namespace SettingsContent
         private void Start()
         {
             _slider.onValueChanged.AddListener(SetMasterVolume);
-            _slider.value = _defaultVolume;
             _toggleSound.onValueChanged.AddListener(SetSoundEnabled);
             _toggleSFX.onValueChanged.AddListener(SetSFXEnabled);
+            _slider.value = _defaultVolume;
+            SetMasterVolume(_slider.value);
         }
 
         private void SetSoundEnabled(bool on)
@@ -49,4 +50,4 @@ namespace SettingsContent
             _audioMixer.SetFloat(Master, dB);
         }
     }
-}
+} 

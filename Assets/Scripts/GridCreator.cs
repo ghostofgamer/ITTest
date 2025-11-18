@@ -3,16 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using AudioContent;
 using DG.Tweening;
+using SOContent;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GridCreator : MonoBehaviour
 {
-    [SerializeField] private int _rows;
-    [SerializeField] private int _cols;
-    [SerializeField] private Cell _cellPrefab;
-    [SerializeField] private float _xOffset = 1f;
-    [SerializeField] private float _zOffset = 1f;
+    [SerializeField] private GridConfig _gridConfig;
     [SerializeField] private Transform _container;
 
     private Cell[,] _grid;
@@ -21,22 +18,22 @@ public class GridCreator : MonoBehaviour
 
     public void CreateGrid()
     {
-        _grid = new Cell[_rows, _cols];
+        _grid = new Cell[_gridConfig.Rows, _gridConfig.Cols];
         StartCoroutine(GenerateGridCoroutine());
     }
 
-    IEnumerator GenerateGridCoroutine()
+    private IEnumerator GenerateGridCoroutine()
     {
-        for (int y = 0; y < _rows; y++)
-        for (int x = 0; x < _cols; x++)
+        for (int y = 0; y < _gridConfig.Rows; y++)
+        for (int x = 0; x < _gridConfig.Cols; x++)
         {
-            float posX = x * _xOffset;
-            float posZ = y * _zOffset;
+            float posX = x * _gridConfig.XOffset;
+            float posZ = y * _gridConfig.ZOffset;
 
             Vector3 finalPos = new Vector3(posX, 0, posZ);
             Vector3 startPos = finalPos + new Vector3(0, -1f, 0);
 
-            Cell newCell = Instantiate(_cellPrefab, startPos, Quaternion.identity, _container);
+            Cell newCell = Instantiate(_gridConfig.CellPrefab, startPos, Quaternion.identity, _container);
             AudioPlayer.PlayCellSpawnSound();
             newCell.Init(x, y);
             _grid[y, x] = newCell;
