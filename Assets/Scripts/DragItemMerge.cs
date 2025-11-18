@@ -3,34 +3,17 @@ using UnityEngine;
 public class DragItemMerge : MonoBehaviour
 {
     [Header("Drag settings")] [SerializeField]
-    private float liftY = 2f; // насколько поднимается объект
+    private float liftY = 2f;
 
     [SerializeField] private float followSpeed = 10f;
     [SerializeField] private LayerMask cellLayer;
     [SerializeField] private int _maxLevel = 5;
     [SerializeField] private ItemSpawner _itemSpawner;
 
-    [Header("Item properties")] public int Level = 1; // уровень элемента
-    public int Id;
-
-    private Camera mainCam;
-    private bool isDragging = false;
-    private Vector3 offset;
-    private Vector3 startPosition;
     private RaycastHit hit;
     private Item _selectObject;
     private Vector3 _startPosition;
-
-    static int cellLayerNumber = 6;
-    LayerMask cellLayerMask = 1 << cellLayerNumber;
-
-
     private Cell _currentCell;
-
-    private void Start()
-    {
-        mainCam = Camera.main;
-    }
 
     private void Update()
     {
@@ -39,28 +22,15 @@ public class DragItemMerge : MonoBehaviour
 
         if (_selectObject == null)
             return;
-
-        /*if (isDragging)
-        {
-            FollowMouse();
-        }
-
-        if (isDragging && Input.GetMouseButtonUp(0))
-        {
-            ReleaseItem();
-        }*/
-
+        
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             Join();
-
             _selectObject = null;
         }
 
         if (_selectObject != null)
-        {
             Move();
-        }
     }
 
     private void Join()
@@ -70,8 +40,7 @@ public class DragItemMerge : MonoBehaviour
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
         Vector3 rayDirection = worldPos - Camera.main.transform.position;
         RaycastHit hitInfo;
-
-
+        
         if (Physics.Raycast(worldPos, rayDirection, out hitInfo, Mathf.Infinity, cellLayer))
         {
             Debug.Log("Hit " + hitInfo.transform.name);
@@ -89,67 +58,18 @@ public class DragItemMerge : MonoBehaviour
                 {
                     ComparisonItem(cell);
                     Debug.Log("Cell is НЕЕЕ Empty!");
-                    // return;
+                    return;
                 }
             }
         }
 
         ResetPosition();
-
-        /*if (Physics.Raycast(worldPos, rayDirection, out hitInfo, Mathf.Infinity, cellLayerMask))
-        {
-            if (hitInfo.transform.TryGetComponent(out Cell cell))
-            {
-                Debug.Log("Cell ");
-                /*if (!cell.IsStay)
-                {
-                    // Snap к клетке
-                    _selectObject.transform.position = cell.transform.position;
-                    _startPosition = cell.transform.position;
-                }
-                else
-                {
-                    // Если клетка занята — Merge
-                    SetNewTank(hitInfo);
-                }#1#
-
-                // Всё, больше ничего делать не нужно
-                ResetPosition();
-                return;
-            }
-        }*/
-
-        /*if (Physics.Raycast(worldPosition, rayDirection, out hitInfo, Mathf.Infinity, _layerMask))
-        {
-            if (hitInfo.transform.TryGetComponent(out Cell positionTank))
-            {
-                if (!hitInfo.collider.gameObject.GetComponent<Cell>().IsStay)
-                {
-                    _selectObject.transform.position = hitInfo.transform.position;
-                    _startPosition = hitInfo.collider.gameObject.transform.position;
-                }
-
-                if (hitInfo.collider.gameObject.GetComponent<Cell>().IsStay)
-                {
-                    SetNewTank(hitInfo);
-                }
-
-                return;
-            }
-            else
-            {
-                ResetPosition();
-                return;
-            }
-        }*/
     }
 
     private void ResetPosition()
     {
         _selectObject.transform.position = _startPosition;
     }
-
-    #region Drag logic
 
     private RaycastHit CastRay()
     {
@@ -209,6 +129,7 @@ public class DragItemMerge : MonoBehaviour
         if (_selectObject.Level >= _maxLevel)
         {
             Debug.Log("левел максимальный " + _selectObject.Level);
+            ResetPosition();
             return;
         }
 
@@ -219,102 +140,23 @@ public class DragItemMerge : MonoBehaviour
             if (_selectObject.Level == cell.CurrentItem.Level)
             {
                 Debug.Log("у них один уровень");
-                Item item = _itemSpawner.GetItem(_selectObject.Level + 1);
-
-                if (item != null)
-                {
-                    _selectObject.gameObject.SetActive(false);
-                    cell.CurrentItem.gameObject.SetActive(false);
-                    
-                    // cell.Clear();
-                    _selectObject.Cell.Clear();
-                    ClearCell();
-                    
-                    Item it = Instantiate(item, transform);
-                    it.SetCell(cell);
-                }
+                _selectObject.gameObject.SetActive(false);
+                cell.CurrentItem.gameObject.SetActive(false);
+                _selectObject.Cell.Clear();
+                ClearCell();
+                
+                _itemSpawner.MergeSpawn(cell,_selectObject.Level + 1);
             }
             else
             {
+                ResetPosition();
                 Debug.Log("Разные уровни");
             }
         }
         else
         {
+            ResetPosition();
             Debug.Log("Наше CEll");
         }
     }
-
-
-    private void ReleaseItem()
-    {
-        isDragging = false;
-
-        // Ищем ближайшую Cell через Raycast
-        Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, cellLayer))
-        {
-            Cell cell = hit.collider.GetComponent<Cell>();
-            if (cell != null)
-            {
-                if (cell.IsEmpty)
-                {
-                    SnapToCell(cell);
-                }
-                else
-                {
-                    // если на Cell уже есть Item того же уровня → Merge
-                    DragItemMerge otherItem = cell.CurrentDragItemMerge;
-
-                    if (otherItem != null && otherItem.Level == this.Level && otherItem.Id != this.Id)
-                    {
-                        MergeWith(otherItem, cell);
-                    }
-                    else
-                    {
-                        // вернуть на стартовую позицию
-                        transform.position = startPosition;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // не попал на Cell → вернуть
-            transform.position = startPosition;
-        }
-    }
-
-    #endregion
-
-    #region Helper methods
-
-    private void SnapToCell(Cell cell)
-    {
-        transform.position = cell.transform.position;
-        cell.CurrentDragItemMerge = this;
-    }
-
-    private void MergeWith(DragItemMerge other, Cell cell)
-    {
-        /*// создаём новый Item следующего уровня на Cell
-        int newLevel = this.Level + 1;
-
-        GameObject newItemPrefab = MergeManager.Instance.GetPrefab(newLevel);
-        GameObject newItem = Instantiate(newItemPrefab, cell.transform.position, Quaternion.identity);
-
-        // присваиваем уровень и Id
-        DragItemMerge newDragItem = newItem.GetComponent<DragItemMerge>();
-        newDragItem.Level = newLevel;
-        newDragItem.Id = Random.Range(1, 999999);
-
-        // деактивируем старые Items
-        Destroy(this.gameObject);
-        Destroy(other.gameObject);
-
-        // назначаем на Cell новый Item
-        cell.CurrentItem = newDragItem;*/
-    }
-
-    #endregion
 }

@@ -18,7 +18,7 @@ public class GridCreator : MonoBehaviour
 
     public event Action _GridCreated;
 
-    void Start()
+    public void CreateGrid()
     {
         _grid = new Cell[_rows, _cols];
         StartCoroutine(GenerateGridCoroutine());
@@ -51,8 +51,8 @@ public class GridCreator : MonoBehaviour
 
     public Cell GetFreeCell()
     {
-        // Возвращает случайную пустую клетку
         var empty = new List<Cell>();
+        
         foreach (var c in _grid)
             if (c.IsEmpty)
                 empty.Add(c);

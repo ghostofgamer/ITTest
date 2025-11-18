@@ -18,9 +18,4 @@ public class Item : MonoBehaviour
         Cell = cell;
         cell.SetItem(this);
     }
-
-    /*public void SetLevel(int level)
-    {
-        Level = level;
-    }*/
 }
