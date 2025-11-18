@@ -10,7 +10,7 @@ public class ItemSpawner : MonoBehaviour
 
     private Item _defaultItem;
     private Dictionary<int, ObjectPool<Item>> _pools;
-    
+
     private void OnEnable()
     {
         _grid._GridCreated += StartSpawn;
@@ -23,7 +23,7 @@ public class ItemSpawner : MonoBehaviour
 
     public void Init()
     {
-       InitPools();
+        InitPools();
     }
 
     public void MergeSpawn(Cell cell, int targetLvl)
@@ -31,7 +31,10 @@ public class ItemSpawner : MonoBehaviour
         Item item = GetFromPool(targetLvl);
 
         if (item != null)
+        {
             item.SetCell(cell);
+            item.PlayParticle();
+        }
         else
             Debug.Log("Ошибка поиска префаба");
     }
@@ -39,7 +42,7 @@ public class ItemSpawner : MonoBehaviour
     private void InitPools()
     {
         _pools = new Dictionary<int, ObjectPool<Item>>();
-        
+
         foreach (var prefab in _prefabs)
         {
             if (!_pools.ContainsKey(prefab.Level))
@@ -51,7 +54,7 @@ public class ItemSpawner : MonoBehaviour
             }
         }
     }
-    
+
     private Item GetFromPool(int level)
     {
         if (_pools.TryGetValue(level, out var pool))
@@ -75,7 +78,7 @@ public class ItemSpawner : MonoBehaviour
 
         if (cell == null)
             return;
-        
+
         Item it = GetFromPool(1);
         it.SetCell(cell);
     }

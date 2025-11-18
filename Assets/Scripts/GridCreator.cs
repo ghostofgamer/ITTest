@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AudioContent;
 using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -36,7 +37,7 @@ public class GridCreator : MonoBehaviour
             Vector3 startPos = finalPos + new Vector3(0, -1f, 0);
 
             Cell newCell = Instantiate(_cellPrefab, startPos, Quaternion.identity, _container);
-
+            AudioPlayer.PlayCellSpawnSound();
             newCell.Init(x, y);
             _grid[y, x] = newCell;
             newCell.transform
@@ -45,14 +46,14 @@ public class GridCreator : MonoBehaviour
 
             yield return new WaitForSeconds(0.05f);
         }
-        
+
         _GridCreated?.Invoke();
     }
 
     public Cell GetFreeCell()
     {
         var empty = new List<Cell>();
-        
+
         foreach (var c in _grid)
             if (c.IsEmpty)
                 empty.Add(c);

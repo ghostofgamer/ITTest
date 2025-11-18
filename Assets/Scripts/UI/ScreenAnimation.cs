@@ -15,8 +15,6 @@ namespace UI
 
         public void PlayOpen()
         {
-            // gameObject.SetActive(true);
-
             switch (_openType)
             {
                 case AnimationType.SlideFromBottom:

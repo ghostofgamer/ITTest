@@ -14,9 +14,12 @@ namespace AudioContent
             _audioConfig = audioConfig;
         }
 
-        public static void PlayClickSound()
-        {
-            _audioSource.PlayOneShot(_audioConfig.ClickSound);
-        }
+        public static void PlayClickSound() => _audioSource.PlayOneShot(_audioConfig.ClickSound);
+        
+        public static void PlayMergeSound() => _audioSource.PlayOneShot(_audioConfig.MergeSound);
+        
+        public static void PlayFlyItemSound() => _audioSource.PlayOneShot(_audioConfig.FlyItemSound);
+        
+        public static void PlayCellSpawnSound() => _audioSource.PlayOneShot(_audioConfig.CellSpawnSound);
     }
 }

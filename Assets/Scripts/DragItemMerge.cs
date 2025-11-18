@@ -70,6 +70,7 @@ public class DragItemMerge : MonoBehaviour
 
     private void ResetPosition()
     {
+        AudioPlayer.PlayFlyItemSound();
         _selectObject.transform.position = _startPosition;
     }
 
@@ -111,6 +112,7 @@ public class DragItemMerge : MonoBehaviour
             {
                 if (hit.collider.TryGetComponent(out Item dragItem))
                 {
+                    AudioPlayer.PlayFlyItemSound();
                     _currentCell = dragItem.Cell;
                     _selectObject = dragItem;
                     _startPosition = _selectObject.transform.position;
@@ -151,6 +153,7 @@ public class DragItemMerge : MonoBehaviour
                 ClearCell();
                 
                 _itemSpawner.MergeSpawn(cell,_selectObject.Level + 1);
+                AudioPlayer.PlayMergeSound();
             }
             else
             {

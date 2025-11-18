@@ -2257,7 +2257,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1490451907}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -3057,6 +3057,7 @@ MonoBehaviour:
   _slider: {fileID: 1797258498}
   _toggleSound: {fileID: 1667344538}
   _toggleSFX: {fileID: 1747602949}
+  _defaultVolume: 0.1
 --- !u!1 &1970722758
 GameObject:
   m_ObjectHideFlags: 0

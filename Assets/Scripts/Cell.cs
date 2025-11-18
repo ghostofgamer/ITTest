@@ -7,10 +7,6 @@ public class Cell : MonoBehaviour
 
     public Item CurrentItem{ get; private set; }
     public bool IsEmpty => CurrentItem == null;
-    
-    public DragItemMerge CurrentDragItemMerge { get; set; }
-    
-    // public bool IsEmpty => CurrentItem == null;
 
     public void Init(int x, int y)
     {

@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: AudioConfig
   m_EditorClassIdentifier: 
   _clickSound: {fileID: 8300000, guid: 1c6e05350ee5acf4c92066c2da44e05f, type: 3}
+  _mergeSound: {fileID: 8300000, guid: 15d5eea93604d9b48ba7c63e9abbf921, type: 3}
+  _flyItemSound: {fileID: 8300000, guid: 9d52fdaab3f1ce24ea89f2b0470d133c, type: 3}
+  _cellSpawnSound: {fileID: 8300000, guid: 9f78d9326fc1dbb4ea25302d2f45d577, type: 3}
