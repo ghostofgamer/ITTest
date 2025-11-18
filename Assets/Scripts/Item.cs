@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public int Level { get; private set; }
+    [SerializeField] private int _level;
+
+    public int Level => _level;
     public Cell Cell { get; private set; }
     public int Id { get; private set; }
 
@@ -17,8 +19,8 @@ public class Item : MonoBehaviour
         cell.SetItem(this);
     }
 
-    public void SetLevel(int level)
+    /*public void SetLevel(int level)
     {
         Level = level;
-    }
+    }*/
 }

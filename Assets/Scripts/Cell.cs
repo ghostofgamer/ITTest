@@ -5,8 +5,8 @@ public class Cell : MonoBehaviour
     public int x;
     public int y;
 
-    private Item _currentItem;
-    public bool IsEmpty => _currentItem == null;
+    public Item CurrentItem{ get; private set; }
+    public bool IsEmpty => CurrentItem == null;
     
     public DragItemMerge CurrentDragItemMerge { get; set; }
     
@@ -20,7 +20,7 @@ public class Cell : MonoBehaviour
 
     public void SetItem(Item item)
     {
-        _currentItem = item;
+        CurrentItem = item;
         
         if (item != null)
             item.transform.position = transform.position;
@@ -28,6 +28,6 @@ public class Cell : MonoBehaviour
 
     public void Clear()
     {
-        _currentItem = null;
+        CurrentItem = null;
     }
 }

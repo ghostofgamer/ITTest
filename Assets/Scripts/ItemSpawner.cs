@@ -6,6 +6,8 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField] private Item _itemPrefab;
     [SerializeField] private GridCreator _grid;
     [SerializeField] private Transform _container;
+    
+    [SerializeField] private Item[] _prefabs;
 
     private void OnEnable()
     {
@@ -28,7 +30,18 @@ public class ItemSpawner : MonoBehaviour
         if (cell == null) return;
 
         Item it = Instantiate(_itemPrefab, _container);
-        it.SetLevel(1);
+        // it.SetLevel(1);
         it.SetCell(cell);
+    }
+
+    public Item GetItem(int targetLvl)
+    {
+        foreach (var itemPrefab in _prefabs)
+        {
+            if (itemPrefab.Level == targetLvl)
+                return itemPrefab;
+        }
+
+        return null;
     }
 }
